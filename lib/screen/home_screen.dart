@@ -1,4 +1,7 @@
+import 'package:fltterai/provider/img_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,8 +11,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  void update() => setState(() {});
   @override
   Widget build(BuildContext context) {
+    final imgProvider = Provider.of<ImgProvider>(context);
+    ImagePicker imgPicker = ImagePicker();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -41,14 +47,29 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FloatingActionButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final XFile? img = await imgPicker.pickImage(
+                    source: ImageSource.gallery,
+                  );
+                  if (img != null) {
+                    update();
+                    imgProvider.getImg(XFile(img.path));
+                  }
+                },
                 child: const Icon(
                   Icons.image,
                 ),
               ),
               const SizedBox(width: 20),
               FloatingActionButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final XFile? img =
+                      await imgPicker.pickImage(source: ImageSource.camera);
+                  if (img != null) {
+                    update();
+                    imgProvider.getImg(XFile(img.path));
+                  }
+                },
                 child: const Icon(Icons.camera),
               ),
             ],

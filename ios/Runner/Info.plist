@@ -49,5 +49,11 @@
 		<false/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>NSCameraUsageDescription</key>
+		<string>서비스를 이용 하시려면 카메라 권한을 허락해 주세요</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>서비스를 이용 하시려면 사진 권한을 허락해 주세요</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Used to capture audio for image picker plugin</string>
 	</dict>
 </plist>
