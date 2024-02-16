@@ -12,7 +12,7 @@ flutter_native_splash:
   # size of the app. Only one parameter can be used, color and background_image cannot both be set.
   # color: "#42a5f5"
   # image: assets/yeji.jpeg
-  background_image: assets/yeji.jpeg
+  background_image: assets/images/cat_and_dog.jpeg
 
   # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
   # the leading # character.
@@ -44,7 +44,7 @@ flutter_native_splash:
   # https://developer.android.com/guide/topics/ui/splash-screen
   # Following are Android 12 specific parameter.
   android_12:
-    image: assets/yeji.jpeg
+    image: assets/images/cat_and_dog.jpeg
   # The image parameter sets the splash screen icon image.  If this parameter is not specified,
   # the app's launcher icon will be used instead.
   # Please note that the splash screen will be clipped to a circle on the center of the screen.
@@ -61,7 +61,7 @@ flutter_native_splash:
   #icon_background_color: "#111111"
 
   # The branding property allows you to specify an image used as branding in the splash screen.
-  branding: assets/yeji.jpeg
+  # branding: assets/yeji.jpeg
 
   # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
   # apply when the device is in dark mode. If they are not specified, the app will use the

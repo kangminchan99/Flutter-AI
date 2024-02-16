@@ -1,5 +1,4 @@
 import 'package:fltterai/screen/home_screen.dart';
-import 'package:fltterai/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -17,7 +16,6 @@ class MyApp extends StatelessWidget {
     FlutterNativeSplash.remove();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
