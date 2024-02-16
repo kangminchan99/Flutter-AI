@@ -2,6 +2,7 @@ import 'package:fltterai/provider/img_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +13,34 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   void update() => setState(() {});
+  Interpreter? interpreter;
+
+  @override
+  void initState() {
+    super.initState();
+    // .then((value) { ... }) : loadModel()함수의 결과가 사용 가능해지면 실행되는 콜백함수
+    loadModel().then((value) {
+      update();
+    });
+  }
+
+  // 모델 불러오기
+  loadModel() async {
+    try {
+      interpreter =
+          await Interpreter.fromAsset('assets/model/model_unquant.tflite');
+      print(interpreter);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  @override
+  void dispose() {
+    interpreter!.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final imgProvider = Provider.of<ImgProvider>(context);
@@ -48,12 +77,16 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               FloatingActionButton(
                 onPressed: () async {
-                  final XFile? img = await imgPicker.pickImage(
-                    source: ImageSource.gallery,
-                  );
-                  if (img != null) {
-                    update();
-                    imgProvider.getImg(XFile(img.path));
+                  try {
+                    final XFile? img = await imgPicker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+                    if (img != null) {
+                      update();
+                      imgProvider.getImg(XFile(img.path));
+                    }
+                  } catch (e) {
+                    print(e.toString());
                   }
                 },
                 child: const Icon(
@@ -63,11 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 20),
               FloatingActionButton(
                 onPressed: () async {
-                  final XFile? img =
-                      await imgPicker.pickImage(source: ImageSource.camera);
-                  if (img != null) {
-                    update();
-                    imgProvider.getImg(XFile(img.path));
+                  try {
+                    final XFile? img =
+                        await imgPicker.pickImage(source: ImageSource.camera);
+                    if (img != null) {
+                      update();
+                      imgProvider.getImg(XFile(img.path));
+                    }
+                  } catch (e) {
+                    print(e.toString());
                   }
                 },
                 child: const Icon(Icons.camera),
