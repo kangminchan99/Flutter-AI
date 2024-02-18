@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:fltterai/model/image_model.dart';
 import 'package:fltterai/provider/img_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,31 +16,23 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   void update() => setState(() {});
-  Interpreter? interpreter;
+  late ImageModel _imageModel;
+
+  var output = List.filled(1 * 2, 0).reshape([1, 2]);
 
   @override
   void initState() {
     super.initState();
+    _imageModel = ImageModel();
     // .then((value) { ... }) : loadModel()함수의 결과가 사용 가능해지면 실행되는 콜백함수
-    loadModel().then((value) {
+    _imageModel.loadModel().then((value) {
       update();
     });
   }
 
-  // 모델 불러오기
-  loadModel() async {
-    try {
-      interpreter =
-          await Interpreter.fromAsset('assets/model/model_unquant.tflite');
-      print(interpreter);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
   @override
   void dispose() {
-    interpreter!.close();
+    _imageModel.dispose();
     super.dispose();
   }
 
@@ -45,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final imgProvider = Provider.of<ImgProvider>(context);
     ImagePicker imgPicker = ImagePicker();
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -52,21 +48,41 @@ class _HomeScreenState extends State<HomeScreen> {
           'Cat vs Dog',
           style: TextStyle(fontStyle: FontStyle.italic, fontSize: 30),
         ),
+        leading: IconButton(
+          onPressed: () async {
+            if (imgProvider.image != null) {
+              _imageModel.isolateInterpreter!.run(
+                  imgProvider.changeImg!.map((e) => e.cast<double>()).toList(),
+                  output);
+            }
+          },
+          icon: Icon(Icons.search),
+        ),
+        actions: [
+          IconButton(
+              onPressed: imgProvider.clearImg, icon: const Icon(Icons.refresh))
+        ],
       ),
       body: Column(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(
-                  'assets/images/cat_and_dog.jpeg',
-                ),
-              ),
-            ),
-          )
+          imgProvider.image == null
+              ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(
+                        'assets/images/cat_and_dog.jpeg',
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width,
+                  child: Image.file(File(imgProvider.image!.path)),
+                )
         ],
       ),
       floatingActionButton: SafeArea(
@@ -84,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (img != null) {
                       update();
                       imgProvider.getImg(XFile(img.path));
+                      imgProvider.change(imgProvider.image);
                     }
                   } catch (e) {
                     print(e.toString());
@@ -102,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (img != null) {
                       update();
                       imgProvider.getImg(XFile(img.path));
+                      imgProvider.change(imgProvider.image);
                     }
                   } catch (e) {
                     print(e.toString());
