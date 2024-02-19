@@ -5,11 +5,34 @@ import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImgProvider with ChangeNotifier {
+  // 이미지 저장
   XFile? _image;
   XFile? get image => _image;
 
+  // 이미지 변환
   List<List<List<List<double>>>>? _changeImg;
   List<List<List<List<double>>>>? get changeImg => _changeImg;
+
+  // 결과 저장
+  double? _result;
+  double? get result => _result;
+
+  // 개 고양이 판별
+  String? _animal;
+  String? get animal => _animal;
+
+  //  setter설정
+  void getResult(double? result) {
+    _result = result;
+    if (result! >= 0.5) {
+      _animal = '강아지';
+    } else {
+      _animal = '고양이';
+    }
+    notifyListeners();
+  }
+
+  void getName() {}
 
   var batchSize = 1;
   var height = 224;

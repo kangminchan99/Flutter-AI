@@ -17,8 +17,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   void update() => setState(() {});
   late ImageModel _imageModel;
+  bool nextImg = true;
 
   var output = List.filled(1 * 2, 0).reshape([1, 2]);
+
+  // var result;
 
   @override
   void initState() {
@@ -51,12 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: IconButton(
           onPressed: () async {
             if (imgProvider.image != null) {
-              _imageModel.isolateInterpreter!.run(
-                  imgProvider.changeImg!.map((e) => e.cast<double>()).toList(),
-                  output);
+              _imageModel.isolateInterpreter!
+                  .run(imgProvider.changeImg!, output);
+
+              print('output${output}');
+              imgProvider.getResult(output[0][0].toDouble());
+              print(imgProvider.result);
             }
           },
-          icon: Icon(Icons.search),
+          icon: const Icon(Icons.search),
         ),
         actions: [
           IconButton(
@@ -78,10 +84,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 )
-              : SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width,
-                  child: Image.file(File(imgProvider.image!.path)),
+              : Column(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width,
+                      child: Image.file(
+                        File(imgProvider.image!.path),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    if (nextImg = true && imgProvider.animal != null) ...[
+                      Text(
+                        '${imgProvider.animal}',
+                        style: const TextStyle(fontSize: 40),
+                      ),
+                    ] else ...[
+                      const Text(
+                        '검색 아이콘을 눌러 강아지인지 고양이인지 확인하세요!!',
+                        style: TextStyle(fontSize: 30),
+                      )
+                    ]
+                  ],
                 )
         ],
       ),
@@ -101,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       update();
                       imgProvider.getImg(XFile(img.path));
                       imgProvider.change(imgProvider.image);
+                      nextImg = !nextImg;
                     }
                   } catch (e) {
                     print(e.toString());
@@ -120,6 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       update();
                       imgProvider.getImg(XFile(img.path));
                       imgProvider.change(imgProvider.image);
+
+                      nextImg = !nextImg;
                     }
                   } catch (e) {
                     print(e.toString());
